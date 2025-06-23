@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MapManager : MonoBehaviour
@@ -52,26 +53,18 @@ public class MapManager : MonoBehaviour
     {
         Debug.Log("Fim de jogo! Jogadas esgotadas.");
 
-        // Obter o índice da fase
         int indiceMapa = ObterIndiceMapa();
 
-        // Salvar a pontuação atual
-        GameController.Instance.dados.pontuacaoAtual = pontuacaoAtual;
+        //GameController.Instance.dados.pontuacaoAtual = pontuacaoAtual;
+        //GameController.Instance.SalvarPontuacao(indiceMapa + 1, pontuacaoAtual);
+        //GameController.Instance.dados.faseAtual = indiceMapa + 1;
+        //GameController.Instance.LiberarProximaFase(indiceMapa + 1);
+        //GameController.Instance.SalvarJogo();
 
-        // Salvar a melhor pontuação se for maior
-        GameController.Instance.SalvarPontuacao(indiceMapa + 1, pontuacaoAtual);
+        //MostrarDesempenho();
 
-        // Atualizar fase atual
-        GameController.Instance.dados.faseAtual = indiceMapa + 1;
-
-        // Liberar a próxima fase (se houver)
-        GameController.Instance.LiberarProximaFase(indiceMapa + 1);
-
-        // Salvar progresso
-        GameController.Instance.SalvarJogo();
-
-        // Exibir desempenho na UI (opcional)
-        MostrarDesempenho();
+       
+        SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
     }
 
     protected int ObterIndiceMapa()

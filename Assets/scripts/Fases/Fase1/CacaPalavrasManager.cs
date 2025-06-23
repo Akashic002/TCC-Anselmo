@@ -17,7 +17,13 @@ public class CacaPalavrasManager : MapManager
     [Header("Linha de Feedback")]
     public LineRenderer lineRenderer;
 
-    // Interno
+    [Header("UI - Lista de Palavras")]
+    public Transform painelListaPalavras; 
+    public GameObject prefabTextoPalavra; 
+
+    private Dictionary<string, GameObject> objetosDasPalavras = new Dictionary<string, GameObject>();
+
+
     private CelulaCacaPalavras[,] gridDeLetras;
     private List<CelulaCacaPalavras> letrasSelecionadas = new List<CelulaCacaPalavras>();
     private bool estaSelecionando = false;
@@ -31,6 +37,7 @@ public class CacaPalavrasManager : MapManager
     {
         base.StartGame();
         GerarGrid();
+        PreencherUIListaPalavras();
     }
 
     #region --- Geração do Grid ---
@@ -128,6 +135,23 @@ public class CacaPalavrasManager : MapManager
             }
         }
     }
+
+    void PreencherUIListaPalavras()
+    {
+        objetosDasPalavras.Clear();
+
+        foreach (Transform filho in painelListaPalavras)
+        {
+            Destroy(filho.gameObject);
+        }
+
+        foreach (string palavra in palavrasParaEncontrar)
+        {
+            GameObject obj = Instantiate(prefabTextoPalavra, painelListaPalavras);
+            obj.GetComponent<UnityEngine.UI.Text>().text = palavra.ToUpper();
+            objetosDasPalavras.Add(palavra.ToUpper(), obj);
+        }
+    }
     #endregion
 
     #region --- Seleção de Letras ---
@@ -160,18 +184,29 @@ public class CacaPalavrasManager : MapManager
 
         string palavraReversa = new string(palavraFormada.Reverse().ToArray());
 
-        if (palavrasParaEncontrar.Contains(palavraFormada.ToUpper()) ||
-            palavrasParaEncontrar.Contains(palavraReversa.ToUpper()))
+        string palavraEncontrada = null;
+
+        if (palavrasParaEncontrar.Contains(palavraFormada.ToUpper()))
+            palavraEncontrada = palavraFormada.ToUpper();
+        else if (palavrasParaEncontrar.Contains(palavraReversa.ToUpper()))
+            palavraEncontrada = palavraReversa.ToUpper();
+
+        if (palavraEncontrada != null)
         {
-            Debug.Log("Palavra encontrada: " + palavraFormada);
+            Debug.Log("Palavra encontrada: " + palavraEncontrada);
 
             foreach (var c in letrasSelecionadas)
             {
                 c.Encontrada();
             }
 
-            palavrasParaEncontrar.Remove(palavraFormada.ToUpper());
-            palavrasParaEncontrar.Remove(palavraReversa.ToUpper());
+            palavrasParaEncontrar.Remove(palavraEncontrada);
+
+            if (objetosDasPalavras.ContainsKey(palavraEncontrada))
+            {
+                var texto = objetosDasPalavras[palavraEncontrada].GetComponent<UnityEngine.UI.Text>();
+                texto.color = Color.green;
+            }
 
             AdicionarPontuacao(10);
         }
