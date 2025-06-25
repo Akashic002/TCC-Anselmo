@@ -24,8 +24,17 @@ public class MenuFases : MonoBehaviour
 
     private void Start()
     {
-        painelMenuInicial.SetActive(true);
-        painelSelecaoFases.SetActive(false);
+        if (GameController.Instance.abrirSelecaoDeFasesDireto)
+        {
+            novoJogo = false; 
+            AbrirSelecaoDeFases();
+            GameController.Instance.abrirSelecaoDeFasesDireto = false; 
+        }
+        else
+        {
+            painelMenuInicial.SetActive(true);
+            painelSelecaoFases.SetActive(false);
+        }
 
         if (GameController.Instance.VerificarSave())
         {
@@ -34,8 +43,8 @@ public class MenuFases : MonoBehaviour
         }
         else
         {
-            botaoContinuar.interactable= false;
-            Debug.Log("Nao tem save");
+            botaoContinuar.interactable = false;
+            Debug.Log("Não tem save");
         }
     }
 
@@ -44,6 +53,7 @@ public class MenuFases : MonoBehaviour
         GameController.Instance.NovoJogo(); 
         novoJogo = true;
         AbrirSelecaoDeFases();
+        AudioManager.Instance.SomBotaoUI();
     }
 
     public void Continuar()
@@ -51,6 +61,7 @@ public class MenuFases : MonoBehaviour
         GameController.Instance.CarregarJogo(); 
         novoJogo = false;
         AbrirSelecaoDeFases();
+        AudioManager.Instance.SomBotaoUI();
     }
 
     private void AbrirSelecaoDeFases()
@@ -83,6 +94,7 @@ public class MenuFases : MonoBehaviour
 
     public void CarregarFase(string nomeCena)
     {
+        AudioManager.Instance.SomBotaoUI();
         SceneManager.LoadScene(nomeCena);
     }
 
@@ -98,6 +110,7 @@ public class MenuFases : MonoBehaviour
     {
         painelMenuInicial.SetActive(true);
         painelSelecaoFases.SetActive(false);
+        AudioManager.Instance.SomBotaoUI();
     }
 
 }

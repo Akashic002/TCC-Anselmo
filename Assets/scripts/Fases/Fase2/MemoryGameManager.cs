@@ -8,7 +8,7 @@ public class MemoryGameManager : MapManager
     [Header("Configurações do Jogo da Memória")]
     public GameObject cartaPrefab;
     public Transform gridCartas;
-    public Sprite[] imagensCartas; // 6 imagens diferentes, cada uma será duplicada
+    public Sprite[] imagensCartas; 
 
     private List<CartaMemoria> cartasInstanciadas = new List<CartaMemoria>();
     private CartaMemoria primeiraCarta;
@@ -40,14 +40,12 @@ public class MemoryGameManager : MapManager
 
         List<Sprite> listaCartas = new List<Sprite>();
 
-        // Adiciona cada imagem duas vezes (para pares)
         foreach (Sprite img in imagensCartas)
         {
             listaCartas.Add(img);
             listaCartas.Add(img);
         }
 
-        // Embaralhar as cartas
         for (int i = 0; i < listaCartas.Count; i++)
         {
             Sprite temp = listaCartas[i];
@@ -57,8 +55,7 @@ public class MemoryGameManager : MapManager
         }
 
         Debug.Log(" Cartas embaralhadas. Total: " + listaCartas.Count);
-
-        // Instanciar cartas no grid
+   
         for (int i = 0; i < listaCartas.Count; i++)
         {
             GameObject cartaObj = Instantiate(cartaPrefab, gridCartas);
@@ -107,6 +104,7 @@ public class MemoryGameManager : MapManager
             segundaCarta.Bloquear();
             paresEncontrados++;
 
+            AudioManager.Instance.SomAcertoCarta();
             AdicionarPontuacao(10);
         }
         else
@@ -128,7 +126,7 @@ public class MemoryGameManager : MapManager
         if (paresEncontrados >= totalDePares)
         {
             Debug.Log(" Vitória! Todos os pares foram encontrados.");
-            GameOver();
+            GameOver(true);
         }
     }
 }

@@ -11,6 +11,8 @@ public class GameController : MonoBehaviour
 
     private string caminhoArquivo;
 
+    public bool abrirSelecaoDeFasesDireto = false;
+
     private void Awake()
     {
         if (Instance == null)
@@ -24,6 +26,7 @@ public class GameController : MonoBehaviour
         }
 
         caminhoArquivo = Application.persistentDataPath + "/save.json";
+        Debug.Log(caminhoArquivo);
 
         CarregarJogo();
     }
@@ -31,7 +34,7 @@ public class GameController : MonoBehaviour
     public void NovoJogo()
     {
         dados = new DadosDoJogo();
-        dados.faseAtual = 1;
+        dados.faseAtual = 0;
         dados.pontuacaoAtual = 0;
         dados.melhoresPontuacoes = new int[10]; 
         dados.fasesLiberadas = new bool[10];    
@@ -78,8 +81,9 @@ public class GameController : MonoBehaviour
 
     public void LiberarProximaFase(int nivelAtual)
     {
-        int proximaFase = nivelAtual;
-        if (proximaFase < dados.fasesLiberadas.Length)
+        int proximaFase = nivelAtual; 
+
+        if (proximaFase >= 0 && proximaFase < dados.fasesLiberadas.Length)
         {
             dados.fasesLiberadas[proximaFase] = true;
             SalvarJogo();

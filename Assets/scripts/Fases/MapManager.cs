@@ -6,7 +6,6 @@ public class MapManager : MonoBehaviour
 {
     [Header("Informações do Mapa")]
     public string nomeMapa;
-    public GameObject assetDoDeus;
 
     [Header("Formas Visuais de Desempenho")]
     public Sprite spriteDesempenhoBaixo;
@@ -19,14 +18,20 @@ public class MapManager : MonoBehaviour
     [Header("UI de Desempenho")]
     public Image imagemDesempenho;
 
+    [Header("HUD")]
+    public Text textoJogadasRestantes;
+    public Text textoPontuacaoAtual;
+
     protected int jogadasAtuais = 0;
     protected int pontuacaoAtual = 0;
+
+    public bool liberarProximaFase;
 
     public virtual void StartGame()
     {
         jogadasAtuais = 0;
         pontuacaoAtual = 0;
-        Debug.Log("Jogo iniciado no mapa: " + nomeMapa);
+        AtualizarHUD();
     }
 
     public virtual void AdicionarPontuacao(int quantidade)
@@ -38,30 +43,38 @@ public class MapManager : MonoBehaviour
     public virtual void UsarJogada()
     {
         jogadasAtuais++;
+        AtualizarHUD();
         if (jogadasAtuais >= maximoDeJogadas)
         {
-            GameOver();
+            GameOver(false);
         }
     }
 
     protected virtual void VerificarCondicaoDeVitoria()
     {
-        // Implementar regra de vitória, se desejar.
+       
     }
 
-    protected virtual void GameOver()
+    protected virtual void GameOver(bool venceu)
     {
         Debug.Log("Fim de jogo! Jogadas esgotadas.");
 
+        int pontuacaoFinal = pontuacaoAtual * (maximoDeJogadas - jogadasAtuais);
+
         int indiceMapa = ObterIndiceMapa();
 
-        //GameController.Instance.dados.pontuacaoAtual = pontuacaoAtual;
-        //GameController.Instance.SalvarPontuacao(indiceMapa + 1, pontuacaoAtual);
-        //GameController.Instance.dados.faseAtual = indiceMapa + 1;
-        //GameController.Instance.LiberarProximaFase(indiceMapa + 1);
-        //GameController.Instance.SalvarJogo();
+        GameController.Instance.dados.pontuacaoAtual = pontuacaoFinal;
+        GameController.Instance.SalvarPontuacao(indiceMapa + 1, pontuacaoFinal);
+        GameController.Instance.dados.faseAtual = indiceMapa + 1;
 
-        //MostrarDesempenho();
+        if (venceu)
+        {
+            GameController.Instance.LiberarProximaFase(ObterIndiceMapa() + 1);
+            liberarProximaFase = true;
+        }
+        GameController.Instance.SalvarJogo();
+
+        MostrarDesempenho();
 
        
         SceneManager.LoadScene("GameOver", LoadSceneMode.Additive);
@@ -69,7 +82,7 @@ public class MapManager : MonoBehaviour
 
     protected int ObterIndiceMapa()
     {
-        string numero = nomeMapa.Replace("Level", "");
+        string numero = nomeMapa.Replace("Fase", "");
         if (int.TryParse(numero, out int indice))
             return indice - 1;
         return 0;
@@ -80,11 +93,18 @@ public class MapManager : MonoBehaviour
         if (imagemDesempenho == null)
             return;
 
-        if (pontuacaoAtual >= 80)
+
+        int jogadasRestantes = maximoDeJogadas - jogadasAtuais;
+        float percentualRestante = (jogadasRestantes / (float)maximoDeJogadas) * 100f;
+
+        Debug.Log("Jogadas restantes: " + jogadasRestantes);
+        Debug.Log("Percentual restante: " + percentualRestante + "%");
+
+        if (percentualRestante >= 70)
         {
             imagemDesempenho.sprite = spriteDesempenhoAlto;
         }
-        else if (pontuacaoAtual >= 50)
+        else if (percentualRestante >= 40)
         {
             imagemDesempenho.sprite = spriteDesempenhoMedio;
         }
@@ -95,4 +115,14 @@ public class MapManager : MonoBehaviour
 
         imagemDesempenho.gameObject.SetActive(true);
     }
+
+    protected virtual void AtualizarHUD()
+    {
+        if (textoJogadasRestantes != null)
+            textoJogadasRestantes.text = "JOGADAS RESTANTES: " + (maximoDeJogadas - jogadasAtuais);
+
+        if (textoPontuacaoAtual != null)
+            textoPontuacaoAtual.text = "PONTUAÇÃO: " + pontuacaoAtual;
+    }
+
 }

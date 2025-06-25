@@ -9,6 +9,9 @@ public class GameOverManager : MonoBehaviour
     public Text textoPontuacao;
     public Image imagemDesempenho;
 
+    public Button botaoContinuar;
+    public Button botaoTentarNovamente;
+
     private MapManager mapManager;
 
     void Start()
@@ -26,24 +29,35 @@ public class GameOverManager : MonoBehaviour
 
     void AtualizarTela()
     {
-        //int pontuacao = GameController.Instance.dados.pontuacaoAtual;
-        //textoPontuacao.text = "Pontuação: " + pontuacao;
+        int pontuacao = GameController.Instance.dados.pontuacaoAtual;
+        textoPontuacao.text = "Pontuação: " + pontuacao;
 
-        //if (pontuacao >= 80)
-        //{
-        //    textoResultado.text = "Incrível!";
-        //    imagemDesempenho.sprite = mapManager.spriteDesempenhoAlto;
-        //}
-        //else if (pontuacao >= 50)
-        //{
-        //    textoResultado.text = "Bom trabalho!";
-        //    imagemDesempenho.sprite = mapManager.spriteDesempenhoMedio;
-        //}
-        //else
-        //{
-        //}
+        if(mapManager.liberarProximaFase)
+        {
+            botaoContinuar.gameObject.SetActive(true);
+            botaoTentarNovamente.gameObject.SetActive(false);
+        }
+        else
+        {
+            botaoContinuar.gameObject.SetActive(false);
+            botaoTentarNovamente.gameObject.SetActive(true);
+        }
+
+        if (pontuacao >= 80)
+        {
+            textoResultado.text = "Incrível!";
+            imagemDesempenho.sprite = mapManager.spriteDesempenhoAlto;
+        }
+        else if (pontuacao >= 50)
+        {
+            textoResultado.text = "Bom trabalho!";
+            imagemDesempenho.sprite = mapManager.spriteDesempenhoMedio;
+        }
+        else
+        {
             textoResultado.text = "Você pode melhorar!";
             imagemDesempenho.sprite = mapManager.spriteDesempenhoBaixo;
+        }
     }
 
     public void TentarNovamente()
@@ -51,11 +65,21 @@ public class GameOverManager : MonoBehaviour
         Scene cenaAtual = SceneManager.GetActiveScene();
         SceneManager.UnloadSceneAsync("GameOver");
         SceneManager.LoadScene(cenaAtual.name);
+        AudioManager.Instance.SomBotaoUI();
+    }
+
+    public void Continuar()
+    {
+        GameController.Instance.abrirSelecaoDeFasesDireto = true;
+        SceneManager.UnloadSceneAsync("GameOver");
+        SceneManager.LoadScene("Menu");
+        AudioManager.Instance.SomBotaoUI();
     }
 
     public void VoltarMapa()
     {
         SceneManager.UnloadSceneAsync("GameOver");
         SceneManager.LoadScene("Menu");
+        AudioManager.Instance.SomBotaoUI();
     }
 }

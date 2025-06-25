@@ -38,6 +38,7 @@ public class CacaPalavrasManager : MapManager
         base.StartGame();
         GerarGrid();
         PreencherUIListaPalavras();
+        MostrarDesempenho();
     }
 
     #region --- Geração do Grid ---
@@ -152,6 +153,15 @@ public class CacaPalavrasManager : MapManager
             objetosDasPalavras.Add(palavra.ToUpper(), obj);
         }
     }
+
+    protected override void VerificarCondicaoDeVitoria()
+    {
+        if (palavrasParaEncontrar.Count == 0)
+        {
+            Debug.Log("Todas as palavras foram encontradas!");
+            GameOver(true);
+        }
+    }
     #endregion
 
     #region --- Seleção de Letras ---
@@ -160,6 +170,7 @@ public class CacaPalavrasManager : MapManager
         letrasSelecionadas.Clear();
         estaSelecionando = true;
         AtualizarLinha();
+        AudioManager.Instance.SomClickFase1();
     }
 
     public void AdicionarLetraSelecionada(CelulaCacaPalavras celula)
@@ -208,6 +219,7 @@ public class CacaPalavrasManager : MapManager
                 texto.color = Color.green;
             }
 
+            //AudioManager.Instance.SomAcertoCarta();
             AdicionarPontuacao(10);
         }
         else
@@ -222,6 +234,7 @@ public class CacaPalavrasManager : MapManager
         estaSelecionando = false;
         lineRenderer.positionCount = 0;
 
+        MostrarDesempenho();
         UsarJogada();
     }
 

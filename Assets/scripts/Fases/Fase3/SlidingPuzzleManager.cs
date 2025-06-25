@@ -31,12 +31,10 @@ public class SlidingPuzzleManager : MapManager
     {
         blocos.Clear();
 
-        // Dividir a imagem
         Texture2D textura = imagemCompleta.texture;
         int larguraSprite = textura.width / colunas;
         int alturaSprite = textura.height / linhas;
 
-        // Gerar os blocos
         for (int y = 0; y < linhas; y++)
         {
             for (int x = 0; x < colunas; x++)
@@ -52,21 +50,17 @@ public class SlidingPuzzleManager : MapManager
                 GameObject blocoObj = Instantiate(blocoPrefab, container);
                 blocoObj.name = $"Bloco {x},{y}";
 
-                // Recortar a imagem
                 Sprite spriteRecortado = Sprite.Create(
                     textura,
                     new Rect(x * larguraSprite, y * alturaSprite, larguraSprite, alturaSprite),
                     new Vector2(0.5f, 0.5f)
                 );
 
-                // Configurar bloco
                 BlocoPuzzle bloco = blocoObj.GetComponent<BlocoPuzzle>();
                 bloco.Configurar(posicao, spriteRecortado, this);
 
-                // Definir tamanho visual do bloco
                 blocoObj.GetComponent<RectTransform>().sizeDelta = new Vector2(tamanhoDoBloco, tamanhoDoBloco);
 
-                // Definir posição na tela
                 blocoObj.GetComponent<RectTransform>().anchoredPosition = PosicaoParaLocal(posicao);
 
                 blocos.Add(posicao, bloco);
@@ -109,7 +103,7 @@ public class SlidingPuzzleManager : MapManager
             if (VerificarVitoria())
             {
                 Debug.Log("Quebra-cabeça resolvido!");
-                GameOver();
+                GameOver(true);
             }
         }
     }
@@ -155,7 +149,7 @@ public class SlidingPuzzleManager : MapManager
 
     Vector3 PosicaoParaLocal(Vector2Int pos)
     {
-        // Calcular deslocamento para centralizar
+        
         float offsetX = -((colunas - 1) * (tamanhoDoBloco + espacamento)) / 2f;
         float offsetY = ((linhas - 1) * (tamanhoDoBloco + espacamento)) / 2f;
 
