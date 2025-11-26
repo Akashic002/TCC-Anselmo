@@ -14,13 +14,14 @@ public class MenuFases : MonoBehaviour
     [Header("Painéis")]
     public GameObject painelMenuInicial;
     public GameObject painelSelecaoFases;
+    public GameObject painelCreditos;
 
     [Header("Configuração das Fases")]
     public BotaoFase[] fases;
 
     private bool novoJogo = false;
 
-    [SerializeField] private Button botaoContinuar;
+    [SerializeField] private Button botaoContinuar, botaoNovoJogo;
 
     private void Start()
     {
@@ -34,15 +35,18 @@ public class MenuFases : MonoBehaviour
         {
             painelMenuInicial.SetActive(true);
             painelSelecaoFases.SetActive(false);
+            painelCreditos.SetActive(false);
         }
 
         if (GameController.Instance.VerificarSave())
         {
             botaoContinuar.interactable = true;
+            botaoNovoJogo.interactable = false;
             Debug.Log("Tem save");
         }
         else
         {
+            botaoNovoJogo.interactable = true;
             botaoContinuar.interactable = false;
             Debug.Log("Não tem save");
         }
@@ -68,7 +72,17 @@ public class MenuFases : MonoBehaviour
     {
         painelMenuInicial.SetActive(false);
         painelSelecaoFases.SetActive(true);
+        painelCreditos.SetActive(false);
         AtualizarFases();
+        AudioManager.Instance.SomBotaoUI();
+    }
+
+    public void AbrirCreditos()
+    {
+        painelMenuInicial.SetActive(false);
+        painelSelecaoFases.SetActive(false);
+        painelCreditos.SetActive(true);
+        AudioManager.Instance.SomBotaoUI();
     }
 
     public void AtualizarFases()
@@ -110,7 +124,17 @@ public class MenuFases : MonoBehaviour
     {
         painelMenuInicial.SetActive(true);
         painelSelecaoFases.SetActive(false);
+        painelCreditos.SetActive(false);
         AudioManager.Instance.SomBotaoUI();
     }
+
+    public void SairDoJogo()
+    {
+        AudioManager.Instance.SomBotaoUI();
+        Application.Quit();
+        Debug.Log("Jogo fechado");
+
+    }
+
 
 }

@@ -65,10 +65,13 @@ public class GameController : MonoBehaviour
 
     public bool VerificarSave()
     {
-        bool temSave = File.Exists(caminhoArquivo);
+        if (dados.fasesLiberadas[1] == true)
+        {
+            return true;
 
-        return temSave;
+        }
 
+        return false;
     }
 
     public bool IsLevelUnlocked(int nivel)

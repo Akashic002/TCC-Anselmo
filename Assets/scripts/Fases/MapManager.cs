@@ -22,8 +22,12 @@ public class MapManager : MonoBehaviour
     public Text textoJogadasRestantes;
     public Text textoPontuacaoAtual;
 
+    [Header("Botão Pause")]
+    [SerializeField] private Button botaoPause;
+
+
     protected int jogadasAtuais = 0;
-    protected int pontuacaoAtual = 0;
+    public int pontuacaoAtual = 0;
 
     public bool liberarProximaFase;
 
@@ -123,6 +127,17 @@ public class MapManager : MonoBehaviour
 
         if (textoPontuacaoAtual != null)
             textoPontuacaoAtual.text = "PONTUAÇÃO: " + pontuacaoAtual;
+    }
+
+    protected virtual void Vitoria()
+    {
+        SceneManager.LoadScene("Vitoria");
+    }
+
+    public void Pause()
+    {
+        SceneManager.LoadSceneAsync("Pause", LoadSceneMode.Additive);
+        Time.timeScale = 0f;
     }
 
 }

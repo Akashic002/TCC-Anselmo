@@ -103,7 +103,8 @@ public class SlidingPuzzleManager : MapManager
             if (VerificarVitoria())
             {
                 Debug.Log("Quebra-cabeça resolvido!");
-                GameOver(true);
+                Vitoria();
+                //GameOver(true);
             }
         }
     }
